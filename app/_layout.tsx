@@ -1,9 +1,10 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {useFonts} from 'expo-font';
-import {Link, Stack, useRouter} from 'expo-router';
+import {Link, Stack, useRouter, useSegments} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {useEffect} from 'react';
 import 'react-native-reanimated';
+import {Text} from "react-native";
 
 import {useColorScheme} from '@/components/useColorScheme';
 
@@ -50,6 +51,7 @@ const InitialLayout = () => {
 
     const router = useRouter();
     const {isLoaded, isSignedIn} = useAuth();
+    const segments = useSegments();
 
     // Expo Router uses Error Boundaries to catch errors in the navigation tree.
     useEffect(() => {
@@ -64,10 +66,19 @@ const InitialLayout = () => {
 
     useEffect(() => {
         console.log('IsSignedIn', isSignedIn);
+        if (!isLoaded) return;
+
+        const inAuthGroup = segments[0] === '(authenticated)';
+
+        if (isSignedIn && !inAuthGroup) {
+            router.replace('/(authenticated)/(tabs)/home');
+        } else if (!isSignedIn) {
+            router.replace('/');
+        }
     }, [isSignedIn]);
 
-    if (!loaded) {
-        return null;
+    if (!loaded || !isLoaded ){
+        return <Text>Loading...</Text>;
     }
 
     return (
@@ -130,6 +141,12 @@ const InitialLayout = () => {
                         </TouchableOpacity>
                     )
                 }}/>
+            <Stack.Screen
+                name="(authenticated)/(tabs)"
+                options={{
+                    headerShown: false,
+                }}
+            />
         </Stack>
     );
 }
