@@ -7,6 +7,7 @@ import {useBalanceStore} from "@/store/balanceStore";
 import {defaultStyles} from "@/constants/Styles";
 import {Ionicons} from "@expo/vector-icons";
 import WidgetList from "@/components/SortableList/WidgetList";
+import {useHeaderHeight} from "@react-navigation/elements";
 
 const onAddMoney = () => {
 
@@ -14,6 +15,7 @@ const onAddMoney = () => {
 
 const Page = () => {
     const {balance, runTransaction, transactions, clearTransactions} = useBalanceStore();
+    const headerHeight = useHeaderHeight();
 
     const onAddMoney = () => {
         console.log('Adding money')
@@ -27,7 +29,11 @@ const Page = () => {
     };
 
     return (
-        <ScrollView style={{backgroundColor: Colors.background}}>
+        <ScrollView style={{backgroundColor: Colors.background}}
+            contentContainerStyle={{
+                paddingTop: headerHeight,
+            }}
+        >
             <View style={styles.account}>
                 <View style={styles.row}>
                     <Text style={styles.balance}>{balance()}</Text>
@@ -46,7 +52,7 @@ const Page = () => {
                 {transactions.length === 0 && (
                     <Text style={{padding: 14, color: Colors.gray}}>No transactions yet</Text>
                 )}
-                {transactions.reverse().map((transaction, index) => (
+                {transactions && transactions.reverse().map((transaction, index) => (
                     <View key={index} style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
                         <View style={styles.circle}>
                             <Ionicons name={transaction.amount > 0 ? 'add' : 'remove'} size={24} color={Colors.dark}/>
