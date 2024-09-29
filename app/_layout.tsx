@@ -6,16 +6,18 @@ import {useEffect} from 'react';
 import 'react-native-reanimated';
 import {Text} from "react-native";
 
-import {useColorScheme} from '@/components/useColorScheme';
-
 import Colors from "@/constants/Colors";
 import {TouchableOpacity} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import {StatusBar} from "expo-status-bar";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {ClerkProvider, useAuth} from "@clerk/clerk-expo";
+
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 import * as SecureStore from 'expo-secure-store';
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 // Cache the Clerk JWT
 const tokenCache = {
@@ -71,13 +73,13 @@ const InitialLayout = () => {
         const inAuthGroup = segments[0] === '(authenticated)';
 
         if (isSignedIn && !inAuthGroup) {
-            router.replace('/(authenticated)/(tabs)/home');
+            router.replace('/(authenticated)/(tabs)/crypto');
         } else if (!isSignedIn) {
             router.replace('/');
         }
     }, [isSignedIn]);
 
-    if (!loaded || !isLoaded ){
+    if (!loaded || !isLoaded) {
         return <Text>Loading...</Text>;
     }
 
@@ -127,7 +129,7 @@ const InitialLayout = () => {
                     title: 'Help',
                     presentation: 'modal'
                 }}
-                />
+            />
             <Stack.Screen
                 name="verify/[phone]"
                 options={{
@@ -154,10 +156,12 @@ const InitialLayout = () => {
 const RootLayoutNav = () => {
     return (
         <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!} tokenCache={tokenCache}>
-            <GestureHandlerRootView style={{flex: 1}}>
-                <StatusBar style="light"/>
-                <InitialLayout/>
-            </GestureHandlerRootView>
+            <QueryClientProvider client={queryClient}>
+                <GestureHandlerRootView style={{flex: 1}}>
+                    <StatusBar style="light"/>
+                    <InitialLayout/>
+                </GestureHandlerRootView>
+            </QueryClientProvider>
         </ClerkProvider>
     );
 }
