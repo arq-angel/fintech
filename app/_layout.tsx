@@ -4,7 +4,7 @@ import {Link, Stack, useRouter, useSegments} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {useEffect} from 'react';
 import 'react-native-reanimated';
-import {Text, View} from "react-native";
+import {ActivityIndicator, Text, View} from "react-native";
 
 import Colors from "@/constants/Colors";
 import {TouchableOpacity} from "react-native";
@@ -68,7 +68,6 @@ const InitialLayout = () => {
     }, [loaded]);
 
     useEffect(() => {
-        console.log('IsSignedIn', isSignedIn);
         if (!isLoaded) return;
 
         const inAuthGroup = segments[0] === '(authenticated)';
@@ -81,7 +80,11 @@ const InitialLayout = () => {
     }, [isSignedIn]);
 
     if (!loaded || !isLoaded) {
-        return <Text>Loading...</Text>;
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+            </View>
+        );
     }
 
     return (
@@ -173,7 +176,7 @@ const InitialLayout = () => {
                     ),
                 }}
             />
-            <Stack.Screen name="/(authenticated)/(modals)/lock" options={{
+            <Stack.Screen name="(authenticated)/(modals)/lock" options={{
                 headerShown: false,
                 animation: 'none'
             }}/>

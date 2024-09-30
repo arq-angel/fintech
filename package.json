@@ -48,7 +48,8 @@
     "victory-native": "^41.4.0",
     "zeego": "^1.10.0",
     "zustand": "^5.0.0-rc.2",
-    "@react-native-async-storage/async-storage": "1.23.1"
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "expo-local-authentication": "~14.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
