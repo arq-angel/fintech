@@ -16,6 +16,7 @@ import {ClerkProvider, useAuth} from "@clerk/clerk-expo";
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 import * as SecureStore from 'expo-secure-store';
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {UserInactivityProvider} from "@/context/UserInactivity";
 
 const queryClient = new QueryClient();
 
@@ -155,23 +156,27 @@ const InitialLayout = () => {
                     title: '',
                     headerLeft: () => (
                         <TouchableOpacity onPress={router.back}>
-                            <Ionicons name="arrow-back" size={34} color={Colors.dark} />
+                            <Ionicons name="arrow-back" size={34} color={Colors.dark}/>
                         </TouchableOpacity>
                     ),
                     headerLargeTitle: true,
                     headerTransparent: true,
                     headerRight: () => (
-                        <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <View style={{flexDirection: 'row', gap: 10}}>
                             <TouchableOpacity>
-                                <Ionicons name="notifications-outline" color={Colors.dark} size={30} />
+                                <Ionicons name="notifications-outline" color={Colors.dark} size={30}/>
                             </TouchableOpacity>
                             <TouchableOpacity>
-                                <Ionicons name="star-outline" color={Colors.dark} size={30} />
+                                <Ionicons name="star-outline" color={Colors.dark} size={30}/>
                             </TouchableOpacity>
                         </View>
                     ),
                 }}
             />
+            <Stack.Screen name="/(authenticated)/(modals)/lock" options={{
+                headerShown: false,
+                animation: 'none'
+            }}/>
         </Stack>
     );
 }
@@ -180,10 +185,12 @@ const RootLayoutNav = () => {
     return (
         <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!} tokenCache={tokenCache}>
             <QueryClientProvider client={queryClient}>
-                <GestureHandlerRootView style={{flex: 1}}>
-                    <StatusBar style="light"/>
-                    <InitialLayout/>
-                </GestureHandlerRootView>
+                <UserInactivityProvider>
+                    <GestureHandlerRootView style={{flex: 1}}>
+                        <StatusBar style="light"/>
+                        <InitialLayout/>
+                    </GestureHandlerRootView>
+                </UserInactivityProvider>
             </QueryClientProvider>
         </ClerkProvider>
     );
